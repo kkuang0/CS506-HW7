@@ -196,9 +196,9 @@ def hypothesis_test():
         hypothesized_value = beta0
 
     # TODO 10: Calculate p-value based on test type
-    if test_type == "two-tailed":
-        p_value = np.mean(np.abs(simulated_stats) >= np.abs(observed_stat))
-    elif test_type == "greater":
+    if test_type == "!=":
+        p_value = 2 * min(np.mean(simulated_stats >= observed_stat), np.mean(simulated_stats <= observed_stat))
+    elif test_type == ">":
         p_value = np.mean(simulated_stats >= observed_stat)
     else:  # test_type == "less"
         p_value = np.mean(simulated_stats <= observed_stat)
