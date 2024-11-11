@@ -269,14 +269,25 @@ def confidence_interval():
 
     # TODO 14: Calculate mean and standard deviation of the estimates
     mean_estimate = np.mean(estimates)
-    std_estimate = np.std(estimates, ddof=1)
+    std_estimate = np.std(estimates)
 
     # TODO 15: Calculate confidence interval for the parameter estimate
     # Use the t-distribution and confidence_level
-    margin_of_error = t.ppf(1 - (1 - confidence_level) / 2, df=S - 1) * std_estimate
-    ci_lower = mean_estimate - margin_of_error
-    ci_upper = mean_estimate + margin_of_error
+    confidence_level_fraction = confidence_level / 100  # e.g., 95 -> 0.95
 
+    # Calculate the percentile for the critical z-value (this should stay between 0 and 100)
+    percentile = 100 * (1 - (1 - confidence_level_fraction) / 2)
+
+    # Ensure that percentile is in the range [0, 100]
+    if percentile < 0 or percentile > 100:
+        raise ValueError(f"Invalid percentile value: {percentile}. Must be between 0 and 100.")
+
+    # Now, calculate the critical z-value
+    z_critical = np.percentile(np.random.normal(0, 1, size=100000), percentile)
+
+    # Calculate the confidence interval using the normal approximation
+    ci_lower = mean_estimate - z_critical * (std_estimate / np.sqrt(S))
+    ci_upper = mean_estimate + z_critical * (std_estimate / np.sqrt(S))
     # TODO 16: Check if confidence interval includes true parameter
     includes_true = ci_lower <= true_param <= ci_upper
 
